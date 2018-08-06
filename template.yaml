@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    sam-puppeteer
+
+    Sample SAM Template for sam-puppeteer
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 180
+
+
+Resources:
+
+    PuppeteerFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: src/
+            Handler: app.lambda_handler
+            Runtime: nodejs8.10
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    PARAM1: VALUE
+            Events:
+                Puppeteer:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /search/{word}
+                        Method: get
+
+Outputs:
+
+    PuppeteerApi:
+      Description: "API Gateway endpoint URL for Prod stage for Puppeteer function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/search/"
+
+    PuppeteerFunction:
+      Description: "Puppeteer Lambda Function ARN"
+      Value: !GetAtt PuppeteerFunction.Arn
+
+    PuppeteerFunctionIamRole:
+      Description: "Implicit IAM Role created for Puppeteer function"
+      Value: !GetAtt PuppeteerFunctionRole.Arn
